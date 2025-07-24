@@ -1,0 +1,160 @@
+{
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "add51ea0-8935-4691-8c5b-9ce077e8b692",
+      "name": "Start",
+      "type": "n8n-nodes-base.start",
+      "typeVersion": 1,
+      "position": [
+        -400,
+        -64
+      ]
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "sheetId": "1pe4sKix-5q20PHWEw-J_m--lHwAskh__Yll9l3wP2uQ",
+        "range": "Sheet1!A:F",
+        "options": {}
+      },
+      "id": "4816e4c7-325b-48d4-aa4f-edb5c60fe287",
+      "name": "Read a sheet",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 1,
+      "position": [
+        -208,
+        -64
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "Z2GlstfzIrLGecLG",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "batchSize": 1,
+        "options": {}
+      },
+      "id": "b3f46b7f-1117-488b-ae73-fc5bfc8612b8",
+      "name": "SplitInBatches",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 1,
+      "position": [
+        0,
+        -64
+      ]
+    },
+    {
+      "parameters": {
+        "filePath": "C:\\Users\\yash\\Downloads\\Yashpal Parmar - CV.pdf"
+      },
+      "id": "e76e3d59-11dd-441a-9fad-d77f42a9ca6e",
+      "name": "Read Resume",
+      "type": "n8n-nodes-base.readBinaryFile",
+      "typeVersion": 1,
+      "position": [
+        224,
+        -64
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "message",
+        "subject": "={{`Yash - Exploring Opportunities to Contribute to DevOps at ${$json[\"Company\"]}`}}",
+        "message": "={{`Hello,\nCongratulations on ${$json[\"Company\"]}'s recent funding. It is impressive to see the progress you are making in the space.\nAs you begin to scale your engineering operations, my background in cloud automation and infrastructure security could be a valuable asset to your team.\nI have attached my resume for a more detailed overview of my projects and technical skills.\nWould you be open to a brief 15-minute conversation to discuss how my experience could support the growth of your company?\nBest regards,\nYashpal Parmar \\nz-yashh.in (portfolio)\\n+91 8696455275\\nyash.parmar2908@gmail.com`}}",
+        "toList": [
+          "={{$json[\"Emails\"]}}"
+        ],
+        "additionalFields": {
+          "attachmentsUi": {
+            "attachmentsBinary": [
+              {
+                "property": "=data"
+              }
+            ]
+          },
+          "ccList": []
+        }
+      },
+      "id": "90821b9d-3562-470e-9b79-931c18ef27b2",
+      "name": "Send Gmail",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 1,
+      "position": [
+        448,
+        -64
+      ],
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "CfUlMEqRri42g9zV",
+          "name": "Gmail account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Start": {
+      "main": [
+        [
+          {
+            "node": "Read a sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read a sheet": {
+      "main": [
+        [
+          {
+            "node": "SplitInBatches",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SplitInBatches": {
+      "main": [
+        [
+          {
+            "node": "Read Resume",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Resume": {
+      "main": [
+        [
+          {
+            "node": "Send Gmail",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Gmail": {
+      "main": [
+        [
+          {
+            "node": "SplitInBatches",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "4afef26e60080bfac286da1cb40280cdf88bfa4600706cfa5b7cd0ee36ca6cf2"
+  }
+}
